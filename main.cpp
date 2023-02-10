@@ -1,8 +1,19 @@
+// #include <iostream>
+// #include "WebServer.h"
+
+// int main() {
+//     WebServer server;
+//     server.run();
+//     return 0;
+// }
+
 #include <iostream>
-#include "WebServer.h"
+
+using namespace std;
 
 int main() {
-    WebServer server;
-    server.run();
+    int a;
+    cin >> a;
+    cout << a << endl;
     return 0;
 }
