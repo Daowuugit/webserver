@@ -1,0 +1,4 @@
+/home/lighthouse/webserver/build/CMakeFiles/rebuild_cache.dir
+/home/lighthouse/webserver/build/CMakeFiles/edit_cache.dir
+/home/lighthouse/webserver/build/CMakeFiles/client.dir
+/home/lighthouse/webserver/build/CMakeFiles/server.dir

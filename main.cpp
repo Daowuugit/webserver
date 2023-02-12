@@ -35,6 +35,7 @@ int main() {
     assert(ret != -1);
     ret = listen(listenfd, 8);
     assert(ret != -1);
+    printf("listening ...\n");
     int epollfd = epoll_create(8);
     assert(epollfd >= 0);
     epoll_addfd(epollfd, listenfd, false);
@@ -52,6 +53,7 @@ int main() {
                 int connfd = accept(listenfd, (struct sockaddr*)&client_address, &client_addrlength);
                 assert(connfd >= 0);
                 epoll_addfd(epollfd, connfd, true);
+                printf("get client\n");
             }
             else if (events[i].events & EPOLLIN) {
                 char buffer[1024];
@@ -60,11 +62,13 @@ int main() {
                     https[sockfd].append_buffer(buffer);
                 }
                 epoll_modfd(epollfd, sockfd);
+                printf("get message\n");
             }
             else if (events[i].events & EPOLLOUT) {
                 https[sockfd].send_buffer(sockfd);
                 epoll_ctl(epollfd, EPOLL_CTL_DEL, sockfd, NULL);
                 close(sockfd);
+                printf("discard client\n");
             }
             else {
                 std::cout << "error\n";        
@@ -95,6 +99,6 @@ void epoll_addfd(int epollfd, int fd, bool oneshot) {
 void epoll_modfd(int epollfd, int fd) {
     epoll_event event;
     event.data.fd = fd;
-    event.events = EPOLLIN | EPOLLET | EPOLLONESHOT;
+    event.events = EPOLLOUT | EPOLLET;
     epoll_ctl(epollfd, EPOLL_CTL_MOD, fd, &event);
 }
