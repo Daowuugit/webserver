@@ -163,6 +163,33 @@ client.cpp.s:
 	$(MAKE) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/client.cpp.s
 .PHONY : client.cpp.s
 
+http.o: http.cpp.o
+
+.PHONY : http.o
+
+# target to build an object file
+http.cpp.o:
+	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/http.cpp.o
+.PHONY : http.cpp.o
+
+http.i: http.cpp.i
+
+.PHONY : http.i
+
+# target to preprocess a source file
+http.cpp.i:
+	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/http.cpp.i
+.PHONY : http.cpp.i
+
+http.s: http.cpp.s
+
+.PHONY : http.s
+
+# target to generate assembly for a file
+http.cpp.s:
+	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/http.cpp.s
+.PHONY : http.cpp.s
+
 main.o: main.cpp.o
 
 .PHONY : main.o
@@ -203,6 +230,9 @@ help:
 	@echo "... client.o"
 	@echo "... client.i"
 	@echo "... client.s"
+	@echo "... http.o"
+	@echo "... http.i"
+	@echo "... http.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
