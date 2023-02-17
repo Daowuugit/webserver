@@ -6,21 +6,9 @@
 
 #IncludeRegexTransform: 
 
-/home/lighthouse/webserver/ThreadPool.h
-queue
--
-mutex
--
-condition_variable
--
-functional
--
-memory
--
-cassert
--
-thread
--
+/home/lighthouse/webserver/http.cpp
+http.h
+/home/lighthouse/webserver/http.h
 
 /home/lighthouse/webserver/http.h
 vector
@@ -53,32 +41,4 @@ sys/mman.h
 -
 sys/epoll.h
 -
-
-/home/lighthouse/webserver/main.cpp
-sys/socket.h
--
-arpa/inet.h
--
-cstring
--
-cassert
--
-sys/epoll.h
--
-fcntl.h
--
-vector
--
-unistd.h
--
-errno.h
--
-iostream
--
-functional
--
-ThreadPool.h
-/home/lighthouse/webserver/ThreadPool.h
-http.h
-/home/lighthouse/webserver/http.h
 

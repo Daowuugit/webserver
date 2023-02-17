@@ -459,3 +459,17 @@ Parsed CXX implicit link information from above output:
   implicit fwks: []
 
 
+Determining if the include file pthread.h exists passed with the following output:
+Change Dir: /home/lighthouse/webserver/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_4cb79/fast && /usr/bin/make -f CMakeFiles/cmTC_4cb79.dir/build.make CMakeFiles/cmTC_4cb79.dir/build
+make[1]: Entering directory '/home/lighthouse/webserver/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_4cb79.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_4cb79.dir/CheckIncludeFile.c.o   -c /home/lighthouse/webserver/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_4cb79
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_4cb79.dir/link.txt --verbose=1
+/usr/bin/cc      CMakeFiles/cmTC_4cb79.dir/CheckIncludeFile.c.o  -o cmTC_4cb79 
+make[1]: Leaving directory '/home/lighthouse/webserver/build/CMakeFiles/CMakeTmp'
+
+
+
