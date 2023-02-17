@@ -17,7 +17,6 @@
 
 int setnonblocking(int fd); // 文件描述符设置为非阻塞
 void epoll_addfd(int epollfd, int fd, bool oneshot); // epoll边沿触发
-void epoll_modfd(int epollfd, int fd); 
 
 int main() {
     const char* ip = "127.0.0.1";
@@ -58,12 +57,7 @@ int main() {
                 epoll_addfd(epollfd, connfd, true);
             }
             else if (events[i].events & EPOLLIN) {
-                https[sockfd].read();
-                epoll_modfd(epollfd, sockfd);
-            }
-            else if (events[i].events & EPOLLOUT) {
-                https[sockfd].write();
-                https[sockfd].close();
+                https[sockfd].task();
                 epoll_ctl(epollfd, EPOLL_CTL_DEL, sockfd, NULL);
                 close(sockfd);
             }
@@ -91,11 +85,4 @@ void epoll_addfd(int epollfd, int fd, bool oneshot) {
     }
     epoll_ctl(epollfd, EPOLL_CTL_ADD, fd, &event);
     setnonblocking(fd);
-}
-
-void epoll_modfd(int epollfd, int fd) {
-    epoll_event event;
-    event.data.fd = fd;
-    event.events = EPOLLOUT | EPOLLET;
-    epoll_ctl(epollfd, EPOLL_CTL_MOD, fd, &event);
 }

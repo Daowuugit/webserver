@@ -43,6 +43,16 @@ regex
 -
 unordered_map
 -
+sys/stat.h
+-
+fcntl.h
+-
+assert.h
+-
+atomic
+-
+sys/uio.h
+-
 
 /home/lighthouse/webserver/main.cpp
 sys/socket.h

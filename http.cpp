@@ -2,35 +2,41 @@
 
 using namespace std;
 
+string http::srcDir;
+atomic<int> http::userCount(0);
+
 void http::init(int connfd, struct sockaddr_in connaddr) {
     sockfd = connfd;
     addr = connaddr;
+    srcDir = getcwd(nullptr, 256);
+    srcDir += "/resources";
+    userCount ++;
+    // cout << srcDir << endl;
     cout << "get client" << endl;
 }
 
-void http::close() {
+void http::Close() {
     buffer.clear();
+    userCount --;   
     cout << "discard client" << endl;
+    cout << "***************************************************" << endl;
 }
 
 void http::task() {
-
-}
-
-void http::read() {
     char temp[1024] = {0};
     int len;
     while((len = recv(sockfd, temp, 1023, 0)) > 0) {
+        temp[len] = '\0';
         for(int i = 0; i < len; ++ i) buffer.push_back(temp[i]);
     }
     cout << "accept message" << endl;
+    // cout << string(buffer.begin(), buffer.end()) << endl;
+
     parse_request();
+    respond_request();
+    Close();
 }
 
-void http::write() {
-    send(sockfd, &buffer[0], buffer.size(), 0);
-    cout << "send message" <<endl;
-}
 
 void http::parse_request() {
     PARSE_STATE state = REQUEST_LINE;
@@ -44,6 +50,7 @@ void http::parse_request() {
         switch(state) {
         case REQUEST_LINE:
             regex_search(begin, end, result, ex_line);
+            cout << result[1] << " " << result[2] << endl;
             mp["method"] = result[1];
             mp["url"] = result[2];
             mp["version"] = result[3];
@@ -54,11 +61,112 @@ void http::parse_request() {
             regex_search(begin, end, result, ex_header);
             mp[result[1]] = result[2];
             begin = result[0].second;
+            if (begin == end) state = BODY;
+            break;
+        case BODY:
+            parse_body(str.substr(begin-str.begin()));
             state = FINISH;
+            break;
+        case FINISH:
+            break;
         }
     }
 }
 
-void respond_request() {
-    
+void http::parse_body(string body) {
+    if(body.size() == 0) { return; }
+    string key, value;
+    int num = 0;
+    int n = body.size();
+    int i = 0, j = 0;   
+    for(; i < n; i++) {
+        char ch = body[i];
+        switch (ch) {
+        case '=':
+            key = body.substr(j, i - j);
+            j = i + 1;
+            break;
+        case '+':
+            body[i] = ' ';
+            break;
+        case '%':
+            num = ConverHex(body[i + 1]) * 16 + ConverHex(body[i + 2]);
+            body[i + 2] = num % 10 + '0';
+            body[i + 1] = num / 10 + '0';
+            i += 2;
+            break;
+        case '&':
+            value = body.substr(j, i - j);
+            j = i + 1;
+            mp[key] = value;
+            break;
+        default:
+            break;
+        }
+    }
+    assert(j <= i);
+    if(mp.count(key) == 0 && j < i) {
+        value = body.substr(j, i - j);
+        mp[key] = value;
+    }
+}
+
+int http::ConverHex(char ch) {
+    if (ch <= 'f' && ch >= 'a') {
+        return ch - 'a' + 10;
+    }
+    if (ch <= 'F' && ch >= 'A') {
+        return ch - 'A' + 10;
+    }
+    return ch - '0';
+}
+
+string http::get_file_type(string file) {
+    string::size_type idx = file.find_last_of('.');
+    if(idx == string::npos) {
+        return "text/plain";
+    }
+    return file.substr(idx);
+}
+
+void http::respond_request() {
+    // 添加状态行
+    pair<string,string> status("200", "OK");
+    string path = mp["url"];
+    struct stat fileStat; // 文件属性结构
+    if(stat((srcDir + path).data(), &fileStat) < 0) { // 文件是否存在
+        status = {"404", "Not Found"};
+        path = "/404.html";
+    }
+    else if (S_ISDIR(fileStat.st_mode)) { // 文件是一个目录
+        status = {"404", "Not Found"};
+        path = "/404.html";
+    }
+    else if(!(fileStat.st_mode & S_IROTH)) { // 是否拥有权限
+        status = {"403", "Forbidden"};
+        path = "/403.html";
+    }
+    string str = "HTTP/1.1 " + status.first + " " + status.second + "\r\n";
+    // 添加头部和空行
+    str += "Connection: keep-alive\r\n";
+    str += "keep-alive: max=6, timeout=120\r\n";
+    str += "Content-type: " + get_file_type(path) + "\r\n";
+    str += "Content-length: " + to_string(fileStat.st_size) + "\r\n\r\n";
+    // 添加消息主体
+    // cout << "path " << (srcDir + path).data() << endl;
+    int srcfd = open((srcDir + path).data(), O_RDONLY);
+    assert(srcfd != -1);
+    char file_buffer[fileStat.st_size + 1] = {0};
+    int len = read(srcfd, file_buffer, fileStat.st_size);
+
+    // 集中写
+    struct iovec iv[2];
+    iv[0].iov_base = &str[0];
+    iv[0].iov_len = str.size();
+    iv[1].iov_base = file_buffer;
+    iv[1].iov_len = fileStat.st_size;
+    len = writev(sockfd, iv, 2);
+    close(srcfd);
+
+    cout << "send message" <<endl;
 }
