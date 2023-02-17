@@ -36,7 +36,7 @@ public:
     void pool_add_task(F&& task) {
         {
             std::lock_guard<std::mutex> lock(taskQue->m_mutex);
-            taskQue->que.emplace(std::forward(task));
+            taskQue->que.emplace(std::forward<F>(task));
         }
         taskQue->m_cv.notify_one();
     }

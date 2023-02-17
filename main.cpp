@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <iostream>
+#include <functional>
 
 #include "ThreadPool.h"
 #include "http.h"
@@ -40,6 +41,8 @@ int main() {
     int epollfd = epoll_create(16);
     assert(epollfd >= 0);
     epoll_addfd(epollfd, listenfd, false);
+    
+    ThreadPool* pool = new ThreadPool();
     std::vector<epoll_event> events(MAX_EVENT_NUMBER); 
     http* https = new http[MAX_FD_COUNT];
 
@@ -53,20 +56,24 @@ int main() {
                 socklen_t client_addrlength = sizeof client_address;
                 int connfd = accept(listenfd, (struct sockaddr*)&client_address, &client_addrlength);
                 assert(connfd != -1);
-                https[connfd].init(connfd, client_address);
+                https[connfd].init(connfd, client_address, epollfd);
                 epoll_addfd(epollfd, connfd, true);
             }
             else if (events[i].events & EPOLLIN) {
-                https[sockfd].task();
-                epoll_ctl(epollfd, EPOLL_CTL_DEL, sockfd, NULL);
-                close(sockfd);
+                pool->pool_add_task(std::bind(&http::task, &https[sockfd]));
+            }
+            else if (events[i].events & EPOLLOUT) {
+                pool->pool_add_task(std::bind(&http::write_, &https[sockfd]));
             }
             else {
                 std::cout << "error\n";        
             }
         }
-
     }
+    close(epollfd);
+    close(listenfd);
+    delete pool;
+    delete [] https;
 }
 
 int setnonblocking(int fd) { 
