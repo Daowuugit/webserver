@@ -217,6 +217,33 @@ http.cpp.s:
 	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/http.cpp.s
 .PHONY : http.cpp.s
 
+log.o: log.cpp.o
+
+.PHONY : log.o
+
+# target to build an object file
+log.cpp.o:
+	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/log.cpp.o
+.PHONY : log.cpp.o
+
+log.i: log.cpp.i
+
+.PHONY : log.i
+
+# target to preprocess a source file
+log.cpp.i:
+	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/log.cpp.i
+.PHONY : log.cpp.i
+
+log.s: log.cpp.s
+
+.PHONY : log.s
+
+# target to generate assembly for a file
+log.cpp.s:
+	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/log.cpp.s
+.PHONY : log.cpp.s
+
 main.o: main.cpp.o
 
 .PHONY : main.o
@@ -263,6 +290,9 @@ help:
 	@echo "... http.o"
 	@echo "... http.i"
 	@echo "... http.s"
+	@echo "... log.o"
+	@echo "... log.i"
+	@echo "... log.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

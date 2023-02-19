@@ -68,6 +68,28 @@ sys/mman.h
 sys/epoll.h
 -
 
+/home/lighthouse/webserver/log.cpp
+log.h
+/home/lighthouse/webserver/log.h
+
+/home/lighthouse/webserver/log.h
+condition_variable
+-
+mutex
+-
+queue
+-
+iostream
+-
+thread
+-
+memory
+-
+sys/time.h
+-
+stdarg.h
+-
+
 /home/lighthouse/webserver/main.cpp
 sys/socket.h
 -
@@ -101,4 +123,6 @@ http.h
 /home/lighthouse/webserver/http.h
 TimeHeap.h
 /home/lighthouse/webserver/TimeHeap.h
+log.h
+/home/lighthouse/webserver/log.h
 

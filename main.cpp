@@ -15,6 +15,7 @@
 #include "ThreadPool.h"
 #include "http.h"
 #include "TimeHeap.h"
+#include "log.h"
 
 #define MAX_EVENT_NUMBER 1024
 #define MAX_FD_COUNT 65536
@@ -30,6 +31,9 @@ void addsig(int sig); // 设置信号回调函数
 void cb_timeout(http *client); // 时间超限函数
 
 int main() {
+    std::unique_ptr<Log> log(Log::Instance());
+    log->init();
+
     const char* ip = "127.0.0.1";
     int port = 5555, ret;
 
@@ -47,7 +51,7 @@ int main() {
     assert(ret != -1);
     ret = listen(listenfd, 16);
     assert(ret != -1);
-    printf("listening ...\n");
+    log -> add_log(2, "listening ..");
     int epollfd = epoll_create(32);
     assert(epollfd >= 0);
     epoll_addfd(epollfd, listenfd, false);
@@ -61,6 +65,7 @@ int main() {
     setnonblocking(pipefd[1]);
     epoll_addfd(epollfd, pipefd[0], false);
     addsig(SIGALRM);
+    addsig(SIGINT);
     bool timeout = false;
     std::unique_ptr<TimeHeap> time_heap(new TimeHeap);
     alarm(alarm_second);
@@ -94,6 +99,9 @@ int main() {
                         case SIGALRM:
                             timeout = true;
                             // std::cout << "sigalrm" << std::endl;
+                            break;
+                        case SIGINT:
+                            log->Fflush();
                             break;
                         }
                     }
