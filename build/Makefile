@@ -136,6 +136,33 @@ server/fast:
 	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/build
 .PHONY : server/fast
 
+TimeHeap.o: TimeHeap.cpp.o
+
+.PHONY : TimeHeap.o
+
+# target to build an object file
+TimeHeap.cpp.o:
+	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/TimeHeap.cpp.o
+.PHONY : TimeHeap.cpp.o
+
+TimeHeap.i: TimeHeap.cpp.i
+
+.PHONY : TimeHeap.i
+
+# target to preprocess a source file
+TimeHeap.cpp.i:
+	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/TimeHeap.cpp.i
+.PHONY : TimeHeap.cpp.i
+
+TimeHeap.s: TimeHeap.cpp.s
+
+.PHONY : TimeHeap.s
+
+# target to generate assembly for a file
+TimeHeap.cpp.s:
+	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/TimeHeap.cpp.s
+.PHONY : TimeHeap.cpp.s
+
 client.o: client.cpp.o
 
 .PHONY : client.o
@@ -227,6 +254,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... client"
 	@echo "... server"
+	@echo "... TimeHeap.o"
+	@echo "... TimeHeap.i"
+	@echo "... TimeHeap.s"
 	@echo "... client.o"
 	@echo "... client.i"
 	@echo "... client.s"

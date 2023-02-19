@@ -28,6 +28,7 @@ const unordered_map<string, string> http::SUFFIX_TYPE = {
 };
 
 void http::init(int connfd, struct sockaddr_in connaddr, int epollfd) {
+    isClosed = false;
     sockfd = connfd;
     addr = connaddr;
     this->epollfd = epollfd;
@@ -45,16 +46,20 @@ void http::init(int connfd, struct sockaddr_in connaddr, int epollfd) {
 }
 
 void http::Close() {
-    write_close();
-    userCount --;   
-    cout << userCount << endl;
-    epoll_ctl(epollfd, EPOLL_CTL_DEL, sockfd, NULL);
-    close(sockfd);
+    if (!isClosed) {
+        isClosed = true;
+        write_close();
+        userCount --;   
+        cout << userCount << endl;
+        close(sockfd);
+        epoll_ctl(epollfd, EPOLL_CTL_DEL, sockfd, NULL);
+        cout << "***************************************************" << endl;
+    }    
     // cout << "discard client" << endl;
-    cout << "***************************************************" << endl;
 }
 
 void http::task_init() {
+    // cout << userCount << endl;
     buffer.clear();
     mp.clear();
 }
@@ -71,7 +76,7 @@ void http::task() {
         Close();
         return ;
     }
-    // cout << "accept message" << endl;
+    cout << "accept message" << endl;
     // cout << string(buffer.begin(), buffer.end()) << endl;
 
     if (parse_request()) {
@@ -230,7 +235,6 @@ void http::respond_request(pair<string,string> status) {
     // 添加头部和空行
     if (isKeepAlive) {
         str += "Connection: keep-alive\r\n";
-        str += "keep-alive: max=6, timeout=120\r\n";
     }
     else {
         str += "Connection: close\r\n";
@@ -265,7 +269,8 @@ void http::write_close() {
 }
 
 void http::write_() {
-    // cout << "send message" <<endl;
+    cout << "send message" <<endl;
+    cout << userCount << endl;
     while(true) {
         int len = writev(sockfd, iv, 2);
         // cout << len << " " << iv[0].iov_len << " " << iv[1].iov_len << endl;

@@ -55,6 +55,7 @@ private:
     char *file_buffer; // 文件
     struct stat fileStat; // 文件属性结构
     bool isKeepAlive;
+    bool isClosed;
     std::unordered_map<std::string, std::string> mp;
 };
 

@@ -11,7 +11,7 @@
 
 class ThreadPool{
 public:
-    ThreadPool(int threadCount = 4): taskQue(std::make_shared<TaskQue>()){
+    ThreadPool(int threadCount = 8): taskQue(std::make_shared<TaskQue>()){
         assert(threadCount > 0);
         taskQue->isClosed = false;
         std::thread([taskQue = taskQue]{
