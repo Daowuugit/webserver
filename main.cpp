@@ -102,7 +102,7 @@ int main() {
                             break;
                         case SIGINT:
                             log->Fflush();
-                            break;
+                            assert(0);
                         }
                     }
                 }
