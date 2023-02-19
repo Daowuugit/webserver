@@ -38,7 +38,7 @@ void http::init(int connfd, struct sockaddr_in connaddr, int epollfd) {
     event_out.events = EPOLLOUT | EPOLLET | EPOLLONESHOT | EPOLLRDHUP; 
     file_buffer = nullptr;
     srcDir = getcwd(nullptr, 256);
-    srcDir += "/resources";
+    srcDir += "/../resources";
     userCount ++;
     isKeepAlive = false;
     // cout << srcDir << endl;

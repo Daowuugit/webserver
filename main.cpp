@@ -65,7 +65,7 @@ int main() {
     setnonblocking(pipefd[1]);
     epoll_addfd(epollfd, pipefd[0], false);
     addsig(SIGALRM);
-    addsig(SIGINT);
+    // addsig(SIGINT);
     bool timeout = false;
     std::unique_ptr<TimeHeap> time_heap(new TimeHeap);
     alarm(alarm_second);
@@ -100,9 +100,9 @@ int main() {
                             timeout = true;
                             // std::cout << "sigalrm" << std::endl;
                             break;
-                        case SIGINT:
-                            log->Fflush();
-                            assert(0);
+                        // case SIGINT:
+                        //     log->Fflush();
+                        //     assert(0);
                         }
                     }
                 }

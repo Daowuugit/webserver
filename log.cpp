@@ -6,7 +6,7 @@ Log* Log::Instance() {
 }
 
 Log::Log(){
-    path = "./log";
+    path = "../log";
     suffix = ".log";
     fp = nullptr;
 }
@@ -80,6 +80,7 @@ void Log::consumer() {
         lock.unlock();
         std::cout << str;
         fputs(str.data(), fp);
+        fflush(fp);
         // fputs("hello", fp);
         cv_producer.notify_one();
     }
