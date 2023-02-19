@@ -41,8 +41,8 @@ void http::init(int connfd, struct sockaddr_in connaddr, int epollfd) {
     srcDir += "/../resources";
     userCount ++;
     isKeepAlive = false;
-    // cout << srcDir << endl;
-    // cout << "get client" << endl;
+    int count = userCount;
+    INFO_LOG(6, "ip:", get_ip(), " port:", to_string(ntohs(addr.sin_port)).c_str(), " get client ", to_string(count).c_str());
 }
 
 void http::Close() {
@@ -50,12 +50,12 @@ void http::Close() {
         isClosed = true;
         write_close();
         userCount --;   
-        cout << userCount << endl;
+        // cout << userCount << endl;
         close(sockfd);
         epoll_ctl(epollfd, EPOLL_CTL_DEL, sockfd, NULL);
-        cout << "***************************************************" << endl;
+        int count = userCount;
+        INFO_LOG(4, "ip:", get_ip(), " discard client ", to_string(count).c_str());
     }    
-    // cout << "discard client" << endl;
 }
 
 void http::task_init() {
@@ -76,7 +76,7 @@ void http::task() {
         Close();
         return ;
     }
-    cout << "accept message" << endl;
+    // INFO_LOG(3, "ip:", get_ip(), " accept message");
     // cout << string(buffer.begin(), buffer.end()) << endl;
 
     if (parse_request()) {
@@ -90,6 +90,7 @@ void http::task() {
         respond_request({"400", "Bad Request"});
     }
     epoll_ctl(epollfd, EPOLL_CTL_MOD, sockfd, &event_out);
+    // INFO_LOG(3, "ip:", get_ip(), " read success");
 }
 
 
@@ -269,8 +270,8 @@ void http::write_close() {
 }
 
 void http::write_() {
-    cout << "send message" <<endl;
-    cout << userCount << endl;
+    // INFO_LOG(3, "ip:", get_ip(), " send message");
+    // cout << userCount << endl;
     while(true) {
         int len = writev(sockfd, iv, 2);
         // cout << len << " " << iv[0].iov_len << " " << iv[1].iov_len << endl;
@@ -310,3 +311,6 @@ void http::write_() {
     }
 }
 
+const char* http::get_ip() {
+    return inet_ntoa(addr.sin_addr);
+}

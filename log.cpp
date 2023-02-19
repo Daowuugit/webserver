@@ -81,7 +81,6 @@ void Log::consumer() {
         std::cout << str;
         fputs(str.data(), fp);
         fflush(fp);
-        // fputs("hello", fp);
         cv_producer.notify_one();
     }
 }
@@ -96,7 +95,7 @@ void Log::producer(std::string str) {
     cv_consumer.notify_one();
 }
 
-void Log::add_log(int level, const char *format, ...) {
+void Log::add_log(int level, int count, ...) {
     std::string ans;
     struct timeval now = {0, 0};
     gettimeofday(&now, nullptr);
@@ -115,6 +114,7 @@ void Log::add_log(int level, const char *format, ...) {
                     t.tm_year + 1900, t.tm_mon + 1, t.tm_mday,
                     t.tm_hour, t.tm_min, t.tm_sec, now.tv_usec);
         std::string str;
+        for(int i = 0; i < n; ++ i) str += buffer[i];
         switch(level) {
         case 1:
             str += "[debug]: ";
@@ -130,13 +130,14 @@ void Log::add_log(int level, const char *format, ...) {
             break;
         }
 
-        va_start(vaList, format);
-        int m = vsnprintf(buffer+n, 1023-n, format, vaList);
+        va_start(vaList, count);
+        for(int i = 1; i <= count; ++ i) {
+            str += va_arg(vaList, const char*);
+        }
         va_end(vaList);
-        for(int i = 0; i < n+m; ++ i) str += buffer[i];
+        
         str += "\n\0";
         producer(str);
-        fputs("hello", fp);
     }
     
 }

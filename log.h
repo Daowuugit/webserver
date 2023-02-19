@@ -14,7 +14,7 @@ class Log {
 public:
     static Log* Instance();
     void init(int capatity = 1000);
-    void add_log(int, const char *,...);
+    void add_log(int, int count,...);
     void Fflush();
     ~Log();
 
@@ -37,5 +37,10 @@ private:
     FILE* fp;
     int today;
 };
+
+#define DEBUG_LOG(count, ...) Log::Instance() -> add_log(1, count, ##__VA_ARGS__)
+#define INFO_LOG(count, ...) Log::Instance() -> add_log(2, count, ##__VA_ARGS__)
+#define WARN_LOG(count, ...) Log::Instance() -> add_log(3, count, ##__VA_ARGS__)
+#define ERROR_LOG(count, ...) Log::Instance() -> add_log(4, count, ##__VA_ARGS__)
 
 #endif // LOG_H

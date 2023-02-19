@@ -31,9 +31,7 @@ void addsig(int sig); // 设置信号回调函数
 void cb_timeout(http *client); // 时间超限函数
 
 int main() {
-    std::unique_ptr<Log> log(Log::Instance());
-    log->init();
-
+    Log::Instance() -> init();
     const char* ip = "127.0.0.1";
     int port = 5555, ret;
 
@@ -51,7 +49,7 @@ int main() {
     assert(ret != -1);
     ret = listen(listenfd, 16);
     assert(ret != -1);
-    log -> add_log(2, "listening ..");
+    INFO_LOG(1, "listening ...");
     int epollfd = epoll_create(32);
     assert(epollfd >= 0);
     epoll_addfd(epollfd, listenfd, false);
@@ -82,7 +80,7 @@ int main() {
                 while((connfd = accept(listenfd, (struct sockaddr*)&client_address, &client_addrlength)) >= 0) {
                     https[connfd].init(connfd, client_address, epollfd);
                     epoll_addfd(epollfd, connfd, true);
-                    time_heap->add_node(connfd, 60*one_second, std::bind(cb_timeout, &https[connfd]));
+                    time_heap->add_node(connfd, 20*one_second, std::bind(cb_timeout, &https[connfd]));
                 }
                 if (errno == EAGAIN) {
                     continue;

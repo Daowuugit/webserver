@@ -16,6 +16,7 @@
 #include <sys/uio.h>
 #include <sys/mman.h>
 #include <sys/epoll.h>
+#include "log.h"
 
 class http{
 public:
@@ -43,6 +44,9 @@ public:
     static std::atomic<int> userCount; // 用户个数
     static const std::unordered_map<std::string, std::string> SUFFIX_TYPE;
     
+private:
+    const char* get_ip();
+
 private:
     int sockfd;
     struct sockaddr_in addr;
